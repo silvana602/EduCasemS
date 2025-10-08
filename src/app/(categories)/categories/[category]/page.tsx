@@ -15,14 +15,14 @@ export default async function CategoryListing({
     params,
     searchParams,
 }: {
-    params: { category: string };
+    params: Promise<{ category: string }>;
     searchParams: Promise<SP>;
 }) {
-    const sp = await searchParams;
+    // 👇 await de ambos props
+    const [{ category: slug }, sp] = await Promise.all([params, searchParams]);
     const page = Math.max(1, Number(str(sp.page, "1")));
-    const slug = params.category;
 
-    // Para el encabezado (nombre y conteo)
+    // Encabezado (nombre + conteo)
     const catData = await serverFetch<{ items: Category[] }>(`/categories`, {
         next: { revalidate: 300, tags: [TAGS.COURSES] },
     });

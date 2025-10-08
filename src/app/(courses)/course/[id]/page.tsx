@@ -1,23 +1,58 @@
 import { serverFetch } from "@/lib/api/server";
 import { TAGS } from "@/lib/cache/tags";
 import type { Course, Lesson } from "@/types/course";
+import type { MyCourse } from "@/types/dashboard";
 import Link from "next/link";
+import EnrollButton from "@/components/courses/EnrollButton";
 
 type Data = Course & { lessons: Lesson[] };
 
-export default async function CourseDetail({ params }: { params: { id: string } }) {
-    const data = await serverFetch<Data>(`/courses/${params.id}`, {
-        next: { revalidate: 120, tags: [TAGS.COURSE(params.id)] },
+export default async function CourseDetail({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+
+    // Datos del curso (cache suave)
+    const data = await serverFetch<Data>(`/courses/${id}`, {
+        next: { revalidate: 120, tags: [TAGS.COURSE(id)] },
     });
+
+    // Cursos del usuario (user-specific)
+    const my = await serverFetch<{ items: MyCourse[] }>(`/me/courses`, {
+        cache: "no-store",
+    });
+
+    const isEnrolled = my.items.some((m) => m.course.id === id);
+    const firstLessonId = data.lessons[0]?.id;
 
     return (
         <div className="grid gap-6">
             <header className="grid gap-2">
                 <h1 className="text-2xl font-semibold">{data.title}</h1>
                 <p className="text-sm text-fg/70">{data.description}</p>
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-800">{data.category}</span>
                     <span className="capitalize text-fg/70">{data.level}</span>
+
+                    <div className="ml-auto flex gap-2">
+                        {isEnrolled ? (
+                            <>
+                                {firstLessonId && (
+                                    <Link
+                                        href={`/course/${id}/lesson/${firstLessonId}`}
+                                        className="rounded-lg bg-brand-600 px-4 py-2 text-xs font-medium text-white hover:bg-brand-800"
+                                    >
+                                        Empezar
+                                    </Link>
+                                )}
+                                {/* podrías añadir un botón “Continuar” si calculas la nextLesson del usuario */}
+                            </>
+                        ) : (
+                            <EnrollButton courseId={id} />
+                        )}
+                    </div>
                 </div>
             </header>
 

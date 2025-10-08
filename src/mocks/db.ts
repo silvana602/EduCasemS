@@ -1,15 +1,27 @@
 import type { Course, Lesson, User } from "./types";
 import { uid } from "./utils";
 
-export const db = {
-    users: [] as User[],
-    courses: [] as Course[],
-    lessons: [] as Lesson[],
-    progress: new Map<string, Set<string>>() /* userId -> completed lessonIds */,
+const G = globalThis as any;
+
+if (!G.__EDU_DB__) {
+    G.__EDU_DB__ = {
+        users: [] as User[],
+        courses: [] as Course[],
+        lessons: [] as Lesson[],
+        progress: new Map<string, Set<string>>(), // userId -> completed lessonIds
+        enrollments: [] as Array<{ userId: string; courseId: string; lastLessonId?: string }>,
+    };
+}
+export const db = G.__EDU_DB__ as {
+    users: User[];
+    courses: Course[];
+    lessons: Lesson[];
+    progress: Map<string, Set<string>>;
+    enrollments: Array<{ userId: string; courseId: string; lastLessonId?: string }>;
 };
 
 export function seedOnce() {
-    if (db.users.length) return; // ya seeded
+    if (G.__EDU_MOCKS_SEEDED__) return;
 
     // Users
     const u1: User = { id: uid("usr"), name: "Ana Torres", email: "ana@demo.com", role: "student", password: "123456" };
@@ -17,7 +29,7 @@ export function seedOnce() {
     const admin: User = { id: uid("usr"), name: "Admin", email: "admin@demo.com", role: "admin", password: "admin" };
     db.users.push(u1, u2, admin);
 
-    // Courses (3)
+    // Courses
     const c1: Course = {
         id: uid("crs"),
         title: "Introducción a Next.js",
@@ -65,12 +77,19 @@ export function seedOnce() {
         }));
     }
 
-    db.lessons.push(
-        ...makeLessons(c1.id, ["Qué es Next.js", "App Router", "SSR/ISR", "Data Fetching", "Deploy en Vercel"]),
-        ...makeLessons(c2.id, ["Tipos básicos", "Interfaces y tipos", "Genéricos", "Narrowing", "Utilitarios"]),
-        ...makeLessons(c3.id, ["React Server Components", "Performance", "Testing", "Accesibilidad"])
+    const l1 = makeLessons(c1.id, ["Qué es Next.js", "App Router", "SSR/ISR", "Data Fetching", "Deploy en Vercel"]);
+    const l2 = makeLessons(c2.id, ["Tipos básicos", "Interfaces y tipos", "Genéricos", "Narrowing", "Utilitarios"]);
+    const l3 = makeLessons(c3.id, ["React Server Components", "Performance", "Testing", "Accesibilidad"]);
+    db.lessons.push(...l1, ...l2, ...l3);
+
+    // progreso inicial
+    db.progress.set(u1.id, new Set());
+
+    // inscribir a Ana
+    db.enrollments.push(
+        { userId: u1.id, courseId: c1.id, lastLessonId: l1[0].id },
+        { userId: u1.id, courseId: c2.id, lastLessonId: l2[0].id }
     );
 
-    // progreso inicial (vacío)
-    db.progress.set(u1.id, new Set());
+    G.__EDU_MOCKS_SEEDED__ = true;
 }

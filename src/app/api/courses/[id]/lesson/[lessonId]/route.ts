@@ -4,9 +4,13 @@ import { delay, json } from "@/mocks/utils";
 
 seedOnce();
 
-export async function GET(_req: NextRequest, ctx: { params: { id: string; lessonId: string } }) {
+export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string; lessonId: string }> }) {
     await delay();
-    const lesson = db.lessons.find((l) => l.id === ctx.params.lessonId && l.courseId === ctx.params.id);
+
+    const { id, lessonId } = await ctx.params;
+
+    const lesson = db.lessons.find((l) => l.id === lessonId && l.courseId === id);
     if (!lesson) return json({ message: "Lección no encontrada" }, { status: 404 });
+
     return json(lesson);
 }

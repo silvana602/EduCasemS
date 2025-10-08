@@ -1,13 +1,19 @@
 export const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
 
-let _i = 0;
-export const uid = (p = "id") => `${p}_${++_i}`;
+const G = globalThis as any;
+if (typeof G.__EDU_UID__ !== "number") G.__EDU_UID__ = 0;
+
+/** Reinicia el contador (lo usa el reset en dev) */
+export function resetUid(n = 0) {
+    (globalThis as any).__EDU_UID__ = n;
+}
+
+export const uid = (p = "id") => `${p}_${++(globalThis as any).__EDU_UID__}`;
 
 export function json<T>(data: T, init?: ResponseInit) {
     return Response.json(data, init);
 }
 
-// util para URLs de categorías
 export function slugify(s: string) {
     return s
         .normalize("NFD")

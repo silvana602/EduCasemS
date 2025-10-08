@@ -4,16 +4,23 @@ import type { Lesson } from "@/types/course";
 import VideoPlayer from "@/components/courses/VideoPlayer";
 import Link from "next/link";
 
-export default async function LessonPage({ params }: { params: { id: string; lessonId: string } }) {
-    const lesson = await serverFetch<Lesson>(`/courses/${params.id}/lessons/${params.lessonId}`, {
-        // Metadatos de la lección cambian poco → cache suave
-        next: { revalidate: 300, tags: [TAGS.LESSON(params.lessonId)] },
+export default async function LessonPage({
+    params,
+}: {
+    params: Promise<{ id: string; lessonId: string }>;
+}) {
+    const { id, lessonId } = await params;
+
+    const lesson = await serverFetch<Lesson>(`/courses/${id}/lessons/${lessonId}`, {
+        next: { revalidate: 300, tags: [TAGS.LESSON(lessonId)] },
     });
 
     return (
         <div className="grid gap-6">
             <nav className="text-sm">
-                <Link href={`/course/${params.id}`} className="text-brand-800 hover:underline">← Volver al curso</Link>
+                <Link href={`/course/${id}`} className="text-brand-800 hover:underline">
+                    ← Volver al curso
+                </Link>
             </nav>
 
             <header className="grid gap-1">
