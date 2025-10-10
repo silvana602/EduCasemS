@@ -1,8 +1,7 @@
 import { serverFetch } from "@/lib/api/server";
-import { TAGS } from "@/lib/cache/tags";
-import type { Lesson } from "@/types/course";
-import VideoPlayer from "@/components/courses/VideoPlayer";
-import Link from "next/link";
+import type { Lesson } from "@/types";
+import type { OutlineSection } from "@/components/courses/CoursePlayerLayout";
+import ClientLessonPlayer from "@/components/courses/ClientLessonPlayer";
 
 export default async function LessonPage({
     params,
@@ -11,26 +10,35 @@ export default async function LessonPage({
 }) {
     const { id, lessonId } = await params;
 
-    const lesson = await serverFetch<Lesson>(`/courses/${id}/lessons/${lessonId}`, {
-        next: { revalidate: 300, tags: [TAGS.LESSON(lessonId)] },
+    // 1) Lección actual
+    const lesson = await serverFetch<Lesson>(`/lessons/${lessonId}`, {
+        cache: "no-store",
     });
 
-    return (
-        <div className="grid gap-6">
-            <nav className="text-sm">
-                <Link href={`/course/${id}`} className="text-brand-800 hover:underline">
-                    ← Volver al curso
-                </Link>
-            </nav>
+    // 2) Outline por secciones con progreso
+    const { sections } = await serverFetch<{ sections: OutlineSection[] }>(
+        `/courses/${id}/outline`,
+        { cache: "no-store" }
+    );
 
+    // 3) Siguiente lección lineal (flatten)
+    const flat = sections.flatMap((s) => s.lessons);
+    const idx = flat.findIndex((l) => l.id === lessonId);
+    const next = idx >= 0 ? flat[idx + 1] : undefined;
+
+    return (
+        <div className="grid gap-4">
             <header className="grid gap-1">
                 <h1 className="text-xl font-semibold">{lesson.title}</h1>
                 <p className="text-sm text-fg/70">{lesson.durationMin} min</p>
             </header>
 
-            <section className="rounded-2xl border border-border bg-surface p-3">
-                <VideoPlayer lessonId={lesson.id} />
-            </section>
+            <ClientLessonPlayer
+                courseId={id}
+                sectionsInitial={sections}
+                currentLessonId={lessonId}
+                nextLessonId={next?.id}
+            />
 
             {lesson.resources?.length ? (
                 <section className="rounded-2xl border border-border bg-surface">
@@ -40,7 +48,12 @@ export default async function LessonPage({
                     <ul className="divide-y divide-border">
                         {lesson.resources.map((r) => (
                             <li key={r.id} className="px-4 py-3">
-                                <a href={r.url} target="_blank" rel="noreferrer" className="text-sm text-brand-800 hover:underline">
+                                <a
+                                    href={r.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-sm text-brand-800 hover:underline"
+                                >
                                     {r.name}
                                 </a>
                             </li>

@@ -8,12 +8,3 @@ export interface Course {
     thumbnailUrl: string;
     instructorId: string;
 }
-
-export interface Lesson {
-    id: string;
-    courseId: string;
-    title: string;
-    durationMin: number;
-    order: number;
-    resources?: { id: string; name: string; url: string }[];
-}

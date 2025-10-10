@@ -16,7 +16,7 @@ export default async function CoursesPage({
 }: {
     searchParams: Promise<SP>;
 }) {
-    const sp = await searchParams;                 // ⬅️ importante
+    const sp = await searchParams;
     const q = str(sp.q, "");
     const page = Math.max(1, Number(str(sp.page, "1")));
 

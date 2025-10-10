@@ -1,4 +1,4 @@
-import type { LoginDto, RegisterDto, AuthResponse, User } from "@/types/auth";
+import type { LoginDto, RegisterDto, AuthResponse, User } from "@/types";
 import { clientFetch } from "@/lib/api/client";
 
 export async function login(body: LoginDto): Promise<AuthResponse> {

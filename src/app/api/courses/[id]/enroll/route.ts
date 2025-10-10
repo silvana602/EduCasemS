@@ -4,7 +4,7 @@ import { db, seedOnce } from "@/mocks/db";
 seedOnce();
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
-    const { id } = await ctx.params; // 👈 importante
+    const { id } = await ctx.params;
 
     const token = req.cookies.get("refreshToken")?.value;
     const userId = token?.match(/^mock-refresh-(.+)$/)?.[1];
