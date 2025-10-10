@@ -38,6 +38,7 @@ export default async function LessonPage({
                 sectionsInitial={sections}
                 currentLessonId={lessonId}
                 nextLessonId={next?.id}
+                videoUrl={lesson.videoUrl}
             />
 
             {lesson.resources?.length ? (

@@ -1,114 +1,169 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function VideoPlayer({
-    lessonId,
-    nextLessonId,
-    onCompleted, // callback para optimismo en el sidebar
-}: {
+type Props = {
     lessonId: string;
+    videoUrl?: string | null;   // 👈 usamos la URL real del lesson
     nextLessonId?: string;
     onCompleted?: () => void;
-}) {
-    const [url, setUrl] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
-    const vidRef = useRef<HTMLVideoElement | null>(null);
+};
+
+export default function VideoPlayer({ lessonId, videoUrl, nextLessonId, onCompleted }: Props) {
+    const ref = useRef<HTMLVideoElement | null>(null);
     const router = useRouter();
 
+    const storageKey = useMemo(() => `vp:${lessonId}:t`, [lessonId]);
+    const [resumeAt, setResumeAt] = useState<number | null>(null);
+    const [showResume, setShowResume] = useState(false);
+    const [isEnding, setIsEnding] = useState(false);
+
+    // leer tiempo guardado
     useEffect(() => {
-        let alive = true;
-        (async () => {
-            try {
-                const res = await fetch(`/api/lessons/${lessonId}`, { cache: "no-store" });
-                if (!res.ok) throw new Error("No se pudo cargar la lección");
-                const data = await res.json();
-                const candidate = data.videoUrl ?? data.signedUrl ?? data.url;
-                if (!candidate) throw new Error("La lección no tiene video");
-                if (alive) setUrl(candidate);
-            } catch (e: any) {
-                if (alive) setError(e?.message ?? "Error cargando video");
+        try {
+            const raw = localStorage.getItem(storageKey);
+            const t = raw ? Math.max(0, Number(raw)) : NaN;
+            if (!Number.isNaN(t) && t > 3) {
+                setResumeAt(t);
+                setShowResume(true);
             }
-        })();
-        return () => {
-            alive = false;
+        } catch { }
+    }, [storageKey]);
+
+    // guardar cada ~3s
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        let last = 0;
+        const onTime = () => {
+            const t = Math.floor(el.currentTime);
+            if (Math.abs(t - last) >= 3) {
+                last = t;
+                try {
+                    localStorage.setItem(storageKey, String(t));
+                } catch { }
+            }
         };
-    }, [lessonId]);
+        el.addEventListener("timeupdate", onTime);
+        return () => el.removeEventListener("timeupdate", onTime);
+    }, [storageKey]);
 
-    // Atajos: J/K/L/F/Space (igual que antes)
+    // atajos J/K/L/F
     useEffect(() => {
-        function onKey(e: KeyboardEvent) {
-            const v = vidRef.current;
+        const onKey = (e: KeyboardEvent) => {
+            const v = ref.current;
             if (!v) return;
-            if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
+            const tag = (e.target as HTMLElement)?.tagName;
+            if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-            if (e.key === "j" || e.key === "J") v.currentTime = Math.max(0, v.currentTime - 10);
-            else if (e.key === "l" || e.key === "L") v.currentTime = Math.min(v.duration || Infinity, v.currentTime + 10);
-            else if (e.key === "k" || e.key === "K" || e.code === "Space") {
+            const k = e.key.toLowerCase();
+            if (k === "j") v.currentTime = Math.max(0, v.currentTime - 10);
+            else if (k === "l") v.currentTime = Math.min(v.duration || Infinity, v.currentTime + 10);
+            else if (k === "k" || e.code === "Space") {
                 e.preventDefault();
-                if (v.paused) v.play(); else v.pause();
-            } else if (e.key === "f" || e.key === "F") {
-                if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen().catch(() => { });
+                v.paused ? v.play().catch(() => { }) : v.pause();
+            } else if (k === "f") {
+                if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
+                else v.requestFullscreen?.().catch(() => { });
             }
-        }
+        };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    async function markCompleted() {
-        if (saving) return;
-        setSaving(true);
-
-        // OPTIMISTA: avisar al padre antes del POST
-        onCompleted?.();
-
+    const handleEnded = async () => {
+        setIsEnding(true);
         try {
             await fetch(`/api/lessons/${lessonId}/complete`, { method: "POST" });
-            router.refresh();
-        } finally {
-            setSaving(false);
-        }
-    }
+        } catch { }
+        onCompleted?.();
+        try {
+            localStorage.removeItem(storageKey);
+        } catch { }
 
-    async function handleEnded() {
-        await markCompleted();
         if (nextLessonId) {
-            // construye la ruta siguiente con la URL actual
-            const parts = typeof window !== "undefined" ? window.location.pathname.split("/") : [];
-            const idx = parts.indexOf("course");
-            const courseId = idx >= 0 ? parts[idx + 1] : "";
-            const href = nextLessonId.startsWith("/course")
-                ? nextLessonId
-                : `/course/${courseId}/lesson/${nextLessonId}`;
-            router.push(href);
+            const t = setTimeout(() => {
+                const m = location.pathname.match(/\/course\/([^/]+)/);
+                const courseId = m?.[1] ?? "";
+                router.push(`/course/${courseId}/lesson/${nextLessonId}`);
+            }, 2000);
+            return () => clearTimeout(t);
         }
-    }
+    };
 
-    if (!url) return <p className="text-sm text-fg/70">Cargando video… {error && `(${error})`}</p>;
+    const resumeFromStored = () => {
+        const v = ref.current;
+        if (!v || resumeAt == null) return;
+        v.currentTime = resumeAt;
+        setShowResume(false);
+    };
+
+    const discardResume = () => {
+        setShowResume(false);
+        try {
+            localStorage.removeItem(storageKey);
+        } catch { }
+    };
+
+    // 👇 priorizamos la URL del lesson; si no viene, probamos /public/videos/:lessonId.mp4
+    const src = videoUrl || `/videos/${lessonId}.mp4`;
 
     return (
-        <div className="grid gap-3">
+        <div className="relative">
             <video
-                key={`${lessonId}:${url}`}
-                ref={vidRef}
-                src={url}
+                ref={ref}
+                className="w-full rounded-xl border border-border bg-black"
                 controls
-                className="w-full rounded-xl bg-black"
-                preload="metadata"
+                playsInline
                 onEnded={handleEnded}
-            />
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={markCompleted}
-                    disabled={saving}
-                    className="rounded-md bg-brand-600 px-3 py-1 text-xs text-white hover:bg-brand-800 disabled:opacity-60"
-                >
-                    {saving ? "Guardando…" : "Marcar como completada"}
-                </button>
-                {error && <span className="text-xs text-red-600">{error}</span>}
-            </div>
+            >
+                <source src={src} type="video/mp4" />
+            </video>
+
+            {showResume && resumeAt != null && (
+                <div className="pointer-events-auto absolute left-3 top-3 z-10 max-w-[90%] rounded-lg border border-border bg-surface/95 p-3 shadow">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs text-fg/80">
+                            ¿Reanudar desde <strong>{fmt(resumeAt)}</strong>?
+                        </span>
+                        <div className="ml-auto flex gap-2">
+                            <button
+                                onClick={resumeFromStored}
+                                className="rounded-md bg-brand-600 px-2 py-1 text-xs text-white hover:bg-brand-800"
+                            >
+                                Reanudar
+                            </button>
+                            <button
+                                onClick={discardResume}
+                                className="rounded-md border border-border px-2 py-1 text-xs hover:bg-brand-50"
+                            >
+                                Empezar de 0
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isEnding && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-end pr-3">
+                    {nextLessonId ? (
+                        <div className="pointer-events-auto rounded-md bg-brand-600 px-3 py-2 text-xs text-white shadow">
+                            Reproduciendo la siguiente lección…
+                        </div>
+                    ) : (
+                        <div className="rounded-md bg-brand-600 px-3 py-2 text-xs text-white shadow">
+                            ¡Lección completada!
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
+}
+
+function fmt(t: number) {
+    const mm = Math.floor(t / 60);
+    const ss = Math.floor(t % 60);
+    return `${String(mm)}:${String(ss).padStart(2, "0")}`;
 }
