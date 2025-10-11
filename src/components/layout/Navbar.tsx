@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout as logoutAction } from "@/redux/slices/authSlice";
 import { logout as logoutReq } from "@/services/auth.service";
 import UserMenu from "./UserMenu";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 function initials(name?: string) {
     if (!name) return "U";
@@ -91,7 +92,9 @@ export const Navbar = () => {
                             onClick={() => setExploreOpen((v) => !v)}
                         >
                             Explorar
-                            <svg width="16" height="16" viewBox="0 0 24 24" className="ml-1"><path d="M7 10l5 5 5-5z" /></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" className="ml-1">
+                                <path d="M7 10l5 5 5-5z" />
+                            </svg>
                         </button>
                     </div>
 
@@ -100,7 +103,9 @@ export const Navbar = () => {
                         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
                             <label className="relative block">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2">
-                                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20l-5.99-6zM9.5 14A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z" /></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24">
+                                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20l-5.99-6zM9.5 14A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z" />
+                                    </svg>
                                 </span>
                                 <input
                                     type="search"
@@ -117,8 +122,13 @@ export const Navbar = () => {
                         <Link href="/about" className="text-sm hover:underline">Educasem Empresas</Link>
 
                         <Link href="/cart" aria-label="Carrito" className="rounded-xl p-2 hover:bg-brand-50">
-                            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14l.84-2h7.45a2 2 0 001.9-1.37l1.71-5.13A1 1 0 0018.12 4H6.21l-.31-1A1 1 0 005 2H2v2h2l3.6 9.59-.95 2.31A2 2 0 008.5 18H19v-2H8.42l.74-2h7.12" /></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24">
+                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM17 18c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14l.84-2h7.45a2 2 0 001.9-1.37l1.71-5.13A1 1 0 0018.12 4H6.21l-.31-1A1 1 0 005 2H2v2h2l3.6 9.59-.95 2.31A2 2 0 008.5 18H19v-2H8.42l.74-2h7.12" />
+                            </svg>
                         </Link>
+
+                        {/* Toggle de tema */}
+                        <ThemeToggle />
 
                         {user ? (
                             <UserMenu />
@@ -137,7 +147,9 @@ export const Navbar = () => {
                                     Regístrate
                                 </Link>
                                 <button aria-label="Idioma" className="rounded-xl border border-border p-2 hover:bg-brand-50">
-                                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm7 9a7.002 7.002 0 01-6 6.92V5.08A7.002 7.002 0 0119 12zM5 12a7.002 7.002 0 016-6.92v13.84A7.002 7.002 0 015 12z" /></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24">
+                                        <path d="M12 3a9 9 0 100 18 9 9 0 000-18zm7 9a7.002 7.002 0 01-6 6.92V5.08A7.002 7.002 0 0119 12zM5 12a7.002 7.002 0 016-6.92v13.84A7.002 7.002 0 015 12z" />
+                                    </svg>
                                 </button>
                             </>
                         )}
@@ -155,9 +167,13 @@ export const Navbar = () => {
                         >
                             <span className="inline-block align-middle">
                                 {openMobile ? (
-                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.89 18.3 9.17 12 2.89 5.71 4.3 4.29l6.29 6.3 6.3-6.3z" /></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current">
+                                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.89 18.3 9.17 12 2.89 5.71 4.3 4.29l6.29 6.3 6.3-6.3z" />
+                                    </svg>
                                 ) : (
-                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" /></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current">
+                                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+                                    </svg>
                                 )}
                             </span>
                         </button>
@@ -166,22 +182,41 @@ export const Navbar = () => {
             </div>
 
             {/* Backdrops */}
-            {openMobile && <div className="md:hidden fixed inset-0 z-40 bg-black/30" aria-hidden onClick={() => setOpenMobile(false)} />}
-            {exploreOpen && <div className="hidden md:block fixed inset-0 z-40 bg-black/30" aria-hidden onClick={() => setExploreOpen(false)} />}
+            {openMobile && (
+                <div
+                    className="md:hidden fixed inset-0 z-40 bg-black/30"
+                    aria-hidden
+                    onClick={() => setOpenMobile(false)}
+                />
+            )}
+            {exploreOpen && (
+                <div
+                    className="hidden md:block fixed inset-0 z-40 bg-black/30"
+                    aria-hidden
+                    onClick={() => setExploreOpen(false)}
+                />
+            )}
 
             {/* Drawer Explorar (desktop) */}
             <div
                 id="explore-drawer"
                 ref={exploreRef}
-                className={`hidden md:block fixed top-16 left-0 bottom-0 z-50 w-[340px] border-r border-border bg-surface shadow-xl transition-transform duration-200 ${exploreOpen ? "translate-x-0" : "-translate-x-full"}`}
+                className={`hidden md:block fixed top-16 left-0 bottom-0 z-50 w-[340px] border-r border-border bg-surface shadow-xl transition-transform duration-200 ${exploreOpen ? "translate-x-0" : "-translate-x-full"
+                    }`}
                 aria-hidden={!exploreOpen}
             >
                 <div className="p-4 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">EX</div>
+                        <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
+                            EX
+                        </div>
                         <div>
-                            <p className="text-sm font-medium">Hola{user ? `, ${user.name.split(" ")[0]}` : ""}</p>
-                            <p className="text-xs text-fg/70">{user ? "¡Hola de nuevo!" : "Explora por categorías"}</p>
+                            <p className="text-sm font-medium">
+                                Hola{user ? `, ${user.name.split(" ")[0]}` : ""}
+                            </p>
+                            <p className="text-xs text-fg/70">
+                                {user ? "¡Hola de nuevo!" : "Explora por categorías"}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -197,7 +232,7 @@ export const Navbar = () => {
                 </nav>
             </div>
 
-            {/* Panel móvil con usuario + cerrar sesión */}
+            {/* Panel móvil con usuario + cerrar sesión + ThemeToggle */}
             <div
                 id={menuId}
                 ref={mobileRef}
@@ -230,6 +265,16 @@ export const Navbar = () => {
                                 <MenuItem variant="nav" {...item} />
                             </li>
                         ))}
+
+                        <li className="h-px bg-border my-1" />
+
+                        {/* Tema (toggle) */}
+                        <li>
+                            <div className="flex items-center justify-between px-3 py-2">
+                                <span className="text-sm">Tema</span>
+                                <ThemeToggle />
+                            </div>
+                        </li>
 
                         <li className="h-px bg-border my-1" />
 
