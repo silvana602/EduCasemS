@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 type Props = {
     lessonId: string;
-    videoUrl?: string | null;   // 👈 usamos la URL real del lesson
+    videoUrl?: string | null;
     nextLessonId?: string;
     onCompleted?: () => void;
 };
@@ -106,7 +106,6 @@ export default function VideoPlayer({ lessonId, videoUrl, nextLessonId, onComple
         } catch { }
     };
 
-    // 👇 priorizamos la URL del lesson; si no viene, probamos /public/videos/:lessonId.mp4
     const src = videoUrl || `/videos/${lessonId}.mp4`;
 
     return (

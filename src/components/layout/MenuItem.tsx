@@ -25,8 +25,8 @@ export const MenuItem = ({ path, icon, title, subTitle, variant = "nav" }: Props
     const base =
         "flex items-center gap-3 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500";
     const spacing = "px-3 py-2";
-    const idle = "text-fg hover:bg-brand-50";
-    const activeClass = "bg-brand-50 text-brand-800 font-medium";
+    const idle = "text-fg hover:bg-brand-soft";
+    const activeClass = "bg-brand-50 text-brand-heading font-medium";
 
     return (
         <Link
@@ -34,7 +34,7 @@ export const MenuItem = ({ path, icon, title, subTitle, variant = "nav" }: Props
             aria-current={active ? "page" : undefined}
             className={cx(base, spacing, active ? activeClass : idle)}
         >
-            <span className={cx("shrink-0", active ? "text-brand-800" : "text-brand-600")}>
+            <span className={cx("shrink-0", active ? "text-brand-heading" : "text-brand-600")}>
                 {icon}
             </span>
 

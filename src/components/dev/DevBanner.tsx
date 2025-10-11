@@ -35,7 +35,7 @@ export default function DevBanner() {
     return (
         <div className="fixed bottom-4 right-4 z-[70] rounded-xl border border-border bg-surface/95 backdrop-blur px-3 py-2 shadow-lg">
             <div className="flex items-center gap-3">
-                <span className="rounded-md bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-800">DEV</span>
+                <span className="rounded-md bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-heading">DEV</span>
                 <button
                     onClick={onReset}
                     disabled={loading}

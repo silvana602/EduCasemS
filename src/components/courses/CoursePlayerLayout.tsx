@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import cn from "@/utils/cn";
+import { FaCaretDown, FaCaretRight } from "react-icons/fa";
 
 export interface OutlineLesson {
     id: string;
@@ -87,7 +88,7 @@ export default function CoursePlayerLayout({
     }, []);
 
     return (
-        // ⬇️ Dos columnas desde lg (≥1024px). En small/medium se apila.
+        // Dos columnas desde lg (≥1024px). En small/medium se apila.
         <div className="grid gap-4 lg:grid-cols-[minmax(0,_1fr)_340px]">
             {/* Columna izquierda: video + acciones */}
             <section className="grid gap-3">
@@ -169,7 +170,7 @@ export default function CoursePlayerLayout({
                                             {done}/{total} • {pct}%
                                         </div>
                                     </div>
-                                    <span className="text-xs text-fg/60">{isCollapsed ? "▸" : "▾"}</span>
+                                    <span className="text-xs text-fg/60">{isCollapsed ? <FaCaretRight /> : <FaCaretDown />}</span>
                                 </button>
 
                                 {!isCollapsed && (
@@ -192,7 +193,7 @@ export default function CoursePlayerLayout({
                                                             </span>
                                                             <span className="min-w-0 flex-1 truncate">{l.title}</span>
                                                             {l.completed && (
-                                                                <span className="shrink-0 rounded-full bg-brand-600/10 px-2 py-0.5 text-[10px] font-medium text-brand-800">
+                                                                <span className="shrink-0 rounded-full bg-brand-600/10 px-2 py-0.5 text-[10px] font-medium text-brand-heading">
                                                                     Hecha
                                                                 </span>
                                                             )}

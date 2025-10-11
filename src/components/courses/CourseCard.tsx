@@ -24,7 +24,7 @@ export default function CourseCard({ course }: { course: Course }) {
                 </Link>
                 <p className="line-clamp-2 text-sm text-fg/70">{course.description}</p>
                 <div className="mt-1 flex items-center justify-between text-xs text-fg/70">
-                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-800">{course.category}</span>
+                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-heading">{course.category}</span>
                     <span className="capitalize">{course.level}</span>
                 </div>
             </div>

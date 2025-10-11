@@ -9,7 +9,7 @@ type Props = {
     sectionsInitial: OutlineSection[];
     currentLessonId: string;
     nextLessonId?: string;
-    videoUrl?: string | null;         // 👈 NUEVO
+    videoUrl?: string | null;
 };
 
 export default function ClientLessonPlayer({
@@ -42,7 +42,7 @@ export default function ClientLessonPlayer({
             <div className="rounded-2xl border border-border bg-surface p-3">
                 <VideoPlayer
                     lessonId={currentLessonId}
-                    videoUrl={videoUrl ?? undefined}  // 👈 SE REENVÍA AL PLAYER
+                    videoUrl={videoUrl ?? undefined}
                     nextLessonId={nextLessonId}
                     onCompleted={markCurrentAsDone}
                 />

@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-/* ===========================
-   THEME TOKENS (por atributo)
-   =========================== */
+/* =========================================
+   THEME TOKENS (control por data-theme)
+   ========================================= */
 
-/* Valores por defecto (fallback) — Light */
+/* Fallback (Light) */
 :root {
   /* Neutros */
   --bg: 255 255 255;
@@ -13,23 +13,27 @@
   /* #171717 */
   --fg-muted: 23 23 23 / 0.70;
   --surface: 255 255 255;
-  /* Cards / navs */
   --border: 229 231 235;
   /* #E5E7EB */
 
-  /* Brand (tu paleta) */
+  /* Brand base */
   --brand-950: 0 23 31;
   /* #00171F */
   --brand-800: 0 52 89;
   /* #003459 */
   --brand-700: 0 96 150;
-  /* tono intermedio para borders */
   --brand-600: 0 126 167;
   /* #007EA7 */
   --brand-500: 0 168 232;
   /* #00A8E8 */
   --brand-50: 230 247 254;
-  /* #E6F7FE (hover suave) */
+  /* #E6F7FE */
+
+  /* Semánticos de marca (por tema) */
+  --brand-fg: var(--brand-800);
+  /* texto de marca */
+  --brand-soft-bg: rgb(var(--brand-50));
+  /* fondo suave */
 
   /* Radios */
   --radius-lg: 1rem;
@@ -50,36 +54,41 @@
   --brand-600: 0 126 167;
   --brand-500: 0 168 232;
   --brand-50: 230 247 254;
+
+  --brand-fg: var(--brand-800);
+  --brand-soft-bg: rgb(var(--brand-50));
 }
 
 /* Tema OSCURO explícito */
 :root[data-theme="dark"] {
-  /* Base oscura con buen contraste */
+  /* Base oscura con contraste */
   --bg: 11 15 26;
-  /* ~ #0B0F1A */
+  /* ~#0B0F1A */
   --fg: 229 231 235;
   /* gray-200 */
   --fg-muted: 229 231 235 / 0.70;
   --surface: 16 23 38;
-  /* paneles: ~ #101726 */
+  /* ~#101726 */
   --border: 31 41 55;
   /* gray-800 */
 
-  /* Ajustes de brand para dark (ligeramente más brillantes) */
+  /* Brand ligeramente más brillante en dark */
   --brand-950: 0 23 31;
-  /* mantiene identidad */
   --brand-800: 0 52 89;
   --brand-700: 0 110 172;
   --brand-600: 0 136 185;
-  /* +luminosidad para contraste */
   --brand-500: 0 168 232;
   --brand-50: 20 48 72;
-  /* hover sutil oscuro (≈ brand tint) */
+
+  /* Semánticos de marca para dark */
+  --brand-fg: 0 168 232;
+  /* usar brand-500 como texto */
+  --brand-soft-bg: rgb(var(--brand-600) / 0.20);
 }
 
-/* ===========================
-   MAPEO A TAILWIND v4
-   =========================== */
+/* =========================================
+   MAPEO A TAILWIND v4 (@theme inline)
+   ========================================= */
 @theme inline {
   --color-bg: rgb(var(--bg));
   --color-fg: rgb(var(--fg));
@@ -93,14 +102,13 @@
   --color-brand-800: rgb(var(--brand-800));
   --color-brand-950: rgb(var(--brand-950));
 
-  /* radios opcionales (si Tailwind tokens los usa) */
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
 }
 
-/* ===========================
+/* =========================================
    BASE
-   =========================== */
+   ========================================= */
 html,
 body,
 :root {
@@ -111,16 +119,14 @@ body {
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui, Arial, Helvetica, sans-serif);
-  /* transición suave al cambiar tema (opcional) */
   transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 
-/* ===========================
-   UTILIDADES SEMÁNTICAS ADICIONALES
-   (conservan tus clases existentes)
-   =========================== */
+/* =========================================
+   UTILIDADES SEMÁNTICAS
+   ========================================= */
 
-/* Clase que ya usas con barra: hay que escapar la / */
+/* Texto atenuado */
 .text-fg\/70 {
   color: color-mix(in oklab, rgb(var(--fg)) 70%, transparent);
 }
@@ -131,7 +137,7 @@ body {
   }
 }
 
-/* Si deseas forzar radios coherentes en utilidades comunes */
+/* Radios coherentes  */
 .rounded-xl {
   border-radius: var(--radius-xl) !important;
 }
@@ -140,15 +146,33 @@ body {
   border-radius: calc(var(--radius-xl) + 6px) !important;
 }
 
-/* (Opcional) sombras suaves consistentes
-.shadow-lg { box-shadow: 0 10px 25px 0 rgba(0,0,0,0.12); }
-*/
+/* Texto de marca que contrasta en ambos temas (logo, énfasis) */
+.text-brand-heading {
+  color: rgb(var(--brand-fg)) !important;
+}
 
-/* ===========================
-   NOTAS:
-   - Las clases de Tailwind como bg-surface, text-fg, border-border,
-     bg-brand-600, text-brand-800, hover:bg-brand-50, etc., ya funcionan
-     porque están mapeadas a --color-* arriba.
-   - El “anti-flash” del tema se maneja con el script en tu layout para
-     establecer data-theme antes de hidratar.
-   =========================== */
+/* Fondo “soft” de marca (hover/activo/pills) */
+.bg-brand-soft {
+  /* Navegadores modernos: mezclar 18% del color de marca con transparente */
+  background-color: color-mix(in oklab, rgb(var(--brand-fg)) 18%, transparent);
+}
+
+@supports not (color: color-mix(in oklab, white, black)) {
+  .bg-brand-soft {
+    background-color: var(--brand-soft-bg);
+  }
+}
+
+/* Chip/badge de marca accesible */
+.badge-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .125rem .5rem;
+  border-radius: 999px;
+  background-color: var(--brand-soft-bg);
+  color: rgb(var(--brand-fg));
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 500;
+}

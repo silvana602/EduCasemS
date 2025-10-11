@@ -10,6 +10,9 @@ import { logout as logoutAction } from "@/redux/slices/authSlice";
 import { logout as logoutReq } from "@/services/auth.service";
 import UserMenu from "./UserMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { MdLanguage } from "react-icons/md";
+import { FaCaretDown, FaShoppingCart } from "react-icons/fa";
+import { IoSearchOutline } from "react-icons/io5";
 
 function initials(name?: string) {
     if (!name) return "U";
@@ -80,7 +83,7 @@ export const Navbar = () => {
                 <nav className="flex h-16 items-center gap-3">
                     {/* Izquierda: Logo + Explorar */}
                     <div className="flex items-center gap-4">
-                        <Link href="/" className="font-semibold text-lg text-brand-800 hover:opacity-90">
+                        <Link href="/" className="font-semibold text-lg text-brand-heading hover:opacity-90">
                             Educasem
                         </Link>
 
@@ -92,9 +95,7 @@ export const Navbar = () => {
                             onClick={() => setExploreOpen((v) => !v)}
                         >
                             Explorar
-                            <svg width="16" height="16" viewBox="0 0 24 24" className="ml-1">
-                                <path d="M7 10l5 5 5-5z" />
-                            </svg>
+                            <FaCaretDown />
                         </button>
                     </div>
 
@@ -103,9 +104,7 @@ export const Navbar = () => {
                         <form className="w-full" onSubmit={(e) => e.preventDefault()}>
                             <label className="relative block">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2">
-                                    <svg width="18" height="18" viewBox="0 0 24 24">
-                                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20l-5.99-6zM9.5 14A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z" />
-                                    </svg>
+                                    <IoSearchOutline />
                                 </span>
                                 <input
                                     type="search"
@@ -122,9 +121,7 @@ export const Navbar = () => {
                         <Link href="/about" className="text-sm hover:underline">Educasem Empresas</Link>
 
                         <Link href="/cart" aria-label="Carrito" className="rounded-xl p-2 hover:bg-brand-50">
-                            <svg width="18" height="18" viewBox="0 0 24 24">
-                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM17 18c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14l.84-2h7.45a2 2 0 001.9-1.37l1.71-5.13A1 1 0 0018.12 4H6.21l-.31-1A1 1 0 005 2H2v2h2l3.6 9.59-.95 2.31A2 2 0 008.5 18H19v-2H8.42l.74-2h7.12" />
-                            </svg>
+                            <FaShoppingCart />
                         </Link>
 
                         {/* Toggle de tema */}
@@ -147,9 +144,7 @@ export const Navbar = () => {
                                     Regístrate
                                 </Link>
                                 <button aria-label="Idioma" className="rounded-xl border border-border p-2 hover:bg-brand-50">
-                                    <svg width="18" height="18" viewBox="0 0 24 24">
-                                        <path d="M12 3a9 9 0 100 18 9 9 0 000-18zm7 9a7.002 7.002 0 01-6 6.92V5.08A7.002 7.002 0 0119 12zM5 12a7.002 7.002 0 016-6.92v13.84A7.002 7.002 0 015 12z" />
-                                    </svg>
+                                    <MdLanguage />
                                 </button>
                             </>
                         )}
@@ -207,9 +202,9 @@ export const Navbar = () => {
             >
                 <div className="p-4 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
-                            EX
-                        </div>
+                        <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
+                            {initials(user?.name)}
+                        </span>
                         <div>
                             <p className="text-sm font-medium">
                                 Hola{user ? `, ${user.name.split(" ")[0]}` : ""}

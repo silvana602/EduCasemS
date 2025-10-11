@@ -26,7 +26,7 @@ export default async function CategoriesPage() {
                             <p className="font-medium">{cat.name}</p>
                             <p className="text-xs text-fg/70">{cat.count} curso(s)</p>
                         </div>
-                        <span className="text-sm text-brand-800">Ver</span>
+                        <span className="text-sm text-brand-heading">Ver</span>
                     </Link>
                 ))}
                 {data.items.length === 0 && (

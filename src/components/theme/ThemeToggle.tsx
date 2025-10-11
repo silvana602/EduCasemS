@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTheme } from "./ThemeProvider";
+import { MdDarkMode, MdLightMode } from 'react-icons/md';
+import { FaCircleHalfStroke } from "react-icons/fa6";
 
 export default function ThemeToggle() {
     const { theme, toggle } = useTheme();
@@ -18,8 +20,7 @@ export default function ThemeToggle() {
                 className="rounded-xl border border-border p-2 hover:bg-brand-50"
                 suppressHydrationWarning
             >
-                {/* Icono neutral (círculo) */}
-                <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg>
+                <FaCircleHalfStroke />
             </button>
         );
     }
@@ -35,15 +36,9 @@ export default function ThemeToggle() {
             suppressHydrationWarning
         >
             {isDark ? (
-                /* Sol */
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                    <path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zM1 13h3v-2H1v2zm10-9h2V1h-2v3zm7.07.05l1.79-1.79-1.79-1.79-1.79 1.79 1.79 1.79zM17 13h3v-2h-3v2zM4.96 19.05l-1.79 1.79 1.79 1.79 1.79-1.79-1.79-1.79zM11 23h2v-3h-2v3zm7.07-3.95l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 6a6 6 0 100 12A6 6 0 0012 6z" />
-                </svg>
+                <MdLightMode />
             ) : (
-                /* Luna */
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                    <path d="M12 2a9.93 9.93 0 00-7.07 2.93A10 10 0 1012 2zm0 18a8 8 0 01-5.66-13.66A10 10 0 0012 20z" />
-                </svg>
+                <MdDarkMode />
             )}
         </button>
     );

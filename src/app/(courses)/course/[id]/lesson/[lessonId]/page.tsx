@@ -53,7 +53,7 @@ export default async function LessonPage({
                                     href={r.url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-sm text-brand-800 hover:underline"
+                                    className="text-sm text-brand-heading hover:underline"
                                 >
                                     {r.name}
                                 </a>
