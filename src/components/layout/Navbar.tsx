@@ -13,18 +13,20 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 import { MdLanguage } from "react-icons/md";
 import { FaCaretDown, FaShoppingCart } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-
-function initials(name?: string) {
-    if (!name) return "U";
-    const p = name.trim().split(/\s+/);
-    return (p[0]?.[0] ?? "U") + (p[1]?.[0] ?? "");
-}
+import Avatar from "@/components/ui/Avatar";
 
 function buildNext(pathname: string | null, qs: string): string | "" {
     if (!pathname) return "";
     if (pathname === "/login" || pathname === "/register") return "";
     const full = qs ? `${pathname}?${qs}` : pathname;
     return full;
+}
+
+function firstName(name?: string) {
+    if (!name) return "";
+    const trimmed = name.trim();
+    const i = trimmed.indexOf(" ");
+    return i === -1 ? trimmed : trimmed.slice(0, i);
 }
 
 export const Navbar = () => {
@@ -72,7 +74,7 @@ export const Navbar = () => {
         try { await logoutReq(); } catch { }
         dispatch(logoutAction());
         setOpenMobile(false);
-        router.replace("/"); // Redirige a raíz
+        router.replace("/");
     }
 
     const menuId = "navbar-mobile-menu";
@@ -202,12 +204,10 @@ export const Navbar = () => {
             >
                 <div className="p-4 border-b border-border">
                     <div className="flex items-center gap-3">
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
-                            {initials(user?.name)}
-                        </span>
+                        <Avatar name={user?.name} src={user?.avatarUrl ?? null} size={36} withBorder={false} />
                         <div>
                             <p className="text-sm font-medium">
-                                Hola{user ? `, ${user.name.split(" ")[0]}` : ""}
+                                Hola{user ? `, ${firstName(user.name)}` : ""}
                             </p>
                             <p className="text-xs text-fg/70">
                                 {user ? "¡Hola de nuevo!" : "Explora por categorías"}
@@ -227,7 +227,7 @@ export const Navbar = () => {
                 </nav>
             </div>
 
-            {/* Panel móvil con usuario + cerrar sesión + ThemeToggle */}
+            {/* Panel móvil */}
             <div
                 id={menuId}
                 ref={mobileRef}
@@ -236,14 +236,11 @@ export const Navbar = () => {
             >
                 <div className="container mx-auto max-w-7xl">
                     <ul className="grid gap-1 rounded-xl border border-border bg-surface p-2 shadow-lg">
-                        {/* Header de usuario cuando está logueado */}
                         {user && (
                             <>
                                 <li className="rounded-lg border border-border p-3">
                                     <div className="flex items-center gap-3">
-                                        <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
-                                            {initials(user.name)}
-                                        </span>
+                                        <Avatar name={user.name} src={user.avatarUrl ?? null} size={40} />
                                         <div className="min-w-0">
                                             <p className="truncate text-sm font-medium">{user.name}</p>
                                             <p className="truncate text-xs text-fg/70">{user.email}</p>
@@ -254,7 +251,6 @@ export const Navbar = () => {
                             </>
                         )}
 
-                        {/* Items de navegación */}
                         {Items.map((item) => (
                             <li key={item.path}>
                                 <MenuItem variant="nav" {...item} />
@@ -263,7 +259,6 @@ export const Navbar = () => {
 
                         <li className="h-px bg-border my-1" />
 
-                        {/* Tema (toggle) */}
                         <li>
                             <div className="flex items-center justify-between px-3 py-2">
                                 <span className="text-sm">Tema</span>
@@ -273,7 +268,6 @@ export const Navbar = () => {
 
                         <li className="h-px bg-border my-1" />
 
-                        {/* Acciones según sesión */}
                         {user ? (
                             <>
                                 <li>
@@ -287,7 +281,7 @@ export const Navbar = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        href="/settings"
+                                        href="/dashboard/settings"
                                         className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
                                         onClick={() => setOpenMobile(false)}
                                     >

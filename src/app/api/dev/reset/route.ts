@@ -1,20 +1,19 @@
-import { NextResponse } from "next/server";
-import { db, seedOnce } from "@/mocks/db";
-import { resetUid } from "@/mocks/utils";
+import { hardResetDb, seedOnce } from "@/mocks/db";
 
+/**
+ * Resetea la BD mock y la vuelve a poblar.
+ * Devuelve 204 (sin body) para mantener compatibilidad con el cliente actual.
+ */
 export async function POST() {
-    // limpia todo
-    db.users.length = 0;
-    db.courses.length = 0;
-    db.sections.length = 0;
-    db.lessons.length = 0;
-    db.enrollments.length = 0;
-    db.progress.clear();
-
-    // reinicia flags/counters globales
-    (globalThis as any).__EDU_MOCKS_SEEDED__ = false;
-    resetUid(0);
-
-    seedOnce(); // nuevo seed limpio
-    return NextResponse.json({ ok: true });
+    try {
+        hardResetDb();
+        seedOnce();
+        return new Response(null, { status: 204 });
+    } catch (err) {
+        console.error("[DEV RESET] error:", err);
+        return new Response(JSON.stringify({ ok: false, error: "reset_failed" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
 }

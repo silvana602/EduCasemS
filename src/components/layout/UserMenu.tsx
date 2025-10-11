@@ -6,12 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout as logoutAction } from "@/redux/slices/authSlice";
 import { logout as logoutReq } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
-
-function initials(name?: string) {
-    if (!name) return "U";
-    const p = name.trim().split(/\s+/);
-    return (p[0]?.[0] ?? "U") + (p[1]?.[0] ?? "");
-}
+import Avatar from "@/components/ui/Avatar";
 
 export default function UserMenu() {
     const { user } = useAppSelector((s) => s.auth);
@@ -38,9 +33,11 @@ export default function UserMenu() {
     }, [close]);
 
     async function onLogout() {
-        try { await logoutReq(); } catch { }
+        try {
+            await logoutReq();
+        } catch { }
         dispatch(logoutAction());
-        router.replace("/"); // Redirige a raíz
+        router.replace("/");
     }
 
     if (!user) return null;
@@ -54,9 +51,7 @@ export default function UserMenu() {
                 onClick={() => setOpen((v) => !v)}
                 className="flex items-center gap-2 rounded-xl border border-border bg-surface px-2 py-1 hover:bg-brand-50"
             >
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-brand-600 text-white text-xs font-semibold">
-                    {initials(user.name)}
-                </span>
+                <Avatar name={user.name} src={user.avatarUrl ?? null} size={32} />
             </button>
 
             {open && (
@@ -66,9 +61,7 @@ export default function UserMenu() {
                     className="absolute right-0 mt-2 w-64 rounded-2xl border border-border bg-surface p-2 shadow-lg z-50"
                 >
                     <div className="flex items-center gap-3 px-3 py-2">
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-600 text-white text-sm font-semibold">
-                            {initials(user.name)}
-                        </span>
+                        <Avatar name={user.name} src={user.avatarUrl ?? null} size={36} />
                         <div className="min-w-0">
                             <p className="truncate text-sm font-medium">{user.name}</p>
                             <p className="truncate text-xs text-fg/70">{user.email}</p>
@@ -77,10 +70,18 @@ export default function UserMenu() {
 
                     <div className="h-px bg-border my-1" />
 
-                    <Link role="menuitem" href="/dashboard" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                    <Link
+                        role="menuitem"
+                        href="/dashboard"
+                        className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                    >
                         Mi aprendizaje
                     </Link>
-                    <Link role="menuitem" href="/settings" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                    <Link
+                        role="menuitem"
+                        href="/dashboard/settings"
+                        className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                    >
                         Configuración
                     </Link>
 
