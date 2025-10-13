@@ -5,16 +5,29 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/services/auth.service";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
+import Link from "next/link";
 
 function sanitizeNext(nextRaw: string | null): string {
-    const fallback = "/dashboard";
-    if (!nextRaw) return fallback;
+    // Fallback vacío para poder aplicar landing por rol
+    if (!nextRaw) return "";
     // Solo permitimos rutas internas
-    if (!nextRaw.startsWith("/")) return fallback;
+    if (!nextRaw.startsWith("/")) return "";
     // Evitar bucles hacia /login o /register
-    if (nextRaw === "/login" || nextRaw.startsWith("/login/")) return fallback;
-    if (nextRaw === "/register" || nextRaw.startsWith("/register/")) return fallback;
+    if (nextRaw === "/login" || nextRaw.startsWith("/login/")) return "";
+    if (nextRaw === "/register" || nextRaw.startsWith("/register/")) return "";
     return nextRaw;
+}
+
+function roleLanding(role?: string): string {
+    switch (role) {
+        case "admin":
+            return "/admin";
+        case "instructor":
+            return "/instructor";
+        case "student":
+        default:
+            return "/dashboard";
+    }
 }
 
 export default function LoginForm() {
@@ -35,7 +48,9 @@ export default function LoginForm() {
         try {
             const data = await login({ email, password });
             dispatch(setCredentials({ accessToken: data.accessToken, user: data.user }));
-            router.replace(nextPath);
+
+            const target = nextPath || roleLanding(data?.user?.role);
+            router.replace(target);
         } catch (err: any) {
             setError(err?.message ?? "No se pudo iniciar sesión");
         } finally {
@@ -86,9 +101,9 @@ export default function LoginForm() {
 
             <p className="text-xs text-fg/70">
                 ¿No tienes cuenta?{" "}
-                <a className="underline" href={`/register${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
+                <Link className="underline" href={`/register${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
                     Regístrate
-                </a>
+                </Link>
             </p>
         </form>
     );

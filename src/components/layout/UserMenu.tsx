@@ -42,6 +42,9 @@ export default function UserMenu() {
 
     if (!user) return null;
 
+    const isAdmin = user.role === "admin";
+    const isInstructor = user.role === "instructor";
+
     return (
         <div className="relative" ref={ref}>
             <button
@@ -70,11 +73,20 @@ export default function UserMenu() {
 
                     <div className="h-px bg-border my-1" />
 
-                    <Link
-                        role="menuitem"
-                        href="/dashboard"
-                        className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
-                    >
+                    {isAdmin && (
+                        <Link role="menuitem" href="/admin" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                            Panel de administración
+                        </Link>
+                    )}
+                    {isInstructor && (
+                        <Link role="menuitem" href="/instructor" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                            Panel de instructor
+                        </Link>
+                    )}
+
+                    {(isAdmin || isInstructor) && <div className="h-px bg-border my-1" />}
+
+                    <Link role="menuitem" href="/dashboard" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
                         Mi aprendizaje
                     </Link>
                     <Link

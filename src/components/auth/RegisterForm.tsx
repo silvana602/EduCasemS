@@ -5,14 +5,26 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { register as registerReq } from "@/services/auth.service";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
+import Link from "next/link";
 
 function sanitizeNext(nextRaw: string | null): string {
-    const fallback = "/dashboard";
-    if (!nextRaw) return fallback;
-    if (!nextRaw.startsWith("/")) return fallback;
-    if (nextRaw === "/login" || nextRaw.startsWith("/login/")) return fallback;
-    if (nextRaw === "/register" || nextRaw.startsWith("/register/")) return fallback;
+    if (!nextRaw) return "";
+    if (!nextRaw.startsWith("/")) return "";
+    if (nextRaw === "/login" || nextRaw.startsWith("/login/")) return "";
+    if (nextRaw === "/register" || nextRaw.startsWith("/register/")) return "";
     return nextRaw;
+}
+
+function roleLanding(role?: string): string {
+    switch (role) {
+        case "admin":
+            return "/admin";
+        case "instructor":
+            return "/instructor";
+        case "student":
+        default:
+            return "/dashboard";
+    }
 }
 
 export default function RegisterForm() {
@@ -38,7 +50,9 @@ export default function RegisterForm() {
         try {
             const data = await registerReq({ name, email, password: pass1 });
             dispatch(setCredentials({ accessToken: data.accessToken, user: data.user }));
-            router.replace(nextPath);
+
+            const target = nextPath || roleLanding(data?.user?.role);
+            router.replace(target);
         } catch (err: any) {
             setError(err?.message ?? "No se pudo crear la cuenta");
         } finally {
@@ -103,9 +117,9 @@ export default function RegisterForm() {
 
             <p className="text-xs text-fg/70">
                 ¿Ya tienes cuenta?{" "}
-                <a className="underline" href={`/login${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
+                <Link className="underline" href={`/login${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
                     Inicia sesión
-                </a>
+                </Link>
             </p>
         </form>
     );

@@ -82,6 +82,7 @@ export function seedOnce() {
         role: "student",
         password: "123456",
         avatarUrl: null,
+        isActive: true,
     };
     const u2: MockUser = {
         id: uid("usr"),
@@ -89,7 +90,8 @@ export function seedOnce() {
         email: "luis@demo.com",
         role: "instructor",
         password: "123456",
-        avatarUrl: "/images/avatar-instructor.webp",
+        avatarUrl: null,
+        isActive: true,
     };
     const admin: MockUser = {
         id: uid("usr"),
@@ -97,7 +99,8 @@ export function seedOnce() {
         email: "admin@demo.com",
         role: "admin",
         password: "admin",
-        avatarUrl: "/images/avatar-admin.webp",
+        avatarUrl: null,
+        isActive: true,
     };
 
     [u1, u2, admin].forEach(mu => {

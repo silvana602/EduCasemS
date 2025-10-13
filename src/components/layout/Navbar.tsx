@@ -78,6 +78,8 @@ export const Navbar = () => {
     }
 
     const menuId = "navbar-mobile-menu";
+    const isAdmin = user?.role === "admin";
+    const isInstructor = user?.role === "instructor";
 
     return (
         <header className="border-b border-border bg-surface">
@@ -256,6 +258,31 @@ export const Navbar = () => {
                                 <MenuItem variant="nav" {...item} />
                             </li>
                         ))}
+
+                        {/* Accesos por rol (móvil) */}
+                        {user && (isAdmin || isInstructor) && <li className="h-px bg-border my-1" />}
+                        {user && isAdmin && (
+                            <li>
+                                <Link
+                                    href="/admin"
+                                    className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                                    onClick={() => setOpenMobile(false)}
+                                >
+                                    Panel de administración
+                                </Link>
+                            </li>
+                        )}
+                        {user && isInstructor && (
+                            <li>
+                                <Link
+                                    href="/instructor"
+                                    className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                                    onClick={() => setOpenMobile(false)}
+                                >
+                                    Panel de instructor
+                                </Link>
+                            </li>
+                        )}
 
                         <li className="h-px bg-border my-1" />
 
