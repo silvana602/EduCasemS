@@ -1,57 +1,43 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Nombre de la cookie que usamos como “señal de sesión”.
- * Debe coincidir con lo que ponen los mocks /api/auth/login y /api/auth/register.
- */
+/** Nombre de la cookie que señaliza sesión (debe coincidir con tus mocks de login) */
 const REFRESH_COOKIE_NAME = "refreshToken";
 
-// Rutas públicas de auth (sin prefijo)
+/** Rutas públicas de auth (sin prefijo) */
 const AUTH_ROUTES = ["/login", "/register"] as const;
 
-// Prefijos de secciones privadas (requieren sesión)
+/** Prefijos de secciones privadas (requieren sesión) */
 const PROTECTED_PREFIXES = ["/dashboard", "/instructor", "/admin"] as const;
 
-/** Devuelve true si el path empieza por alguno de los prefijos /dashboard, /instructor, /admin */
+/** Devuelve true si el path empieza por alguno de los prefijos protegidos */
 function isProtectedPath(pathname: string) {
-    return PROTECTED_PREFIXES.some(
-        (p) => pathname === p || pathname.startsWith(p + "/")
-    );
-}
-
-/** Devuelve true si el path es /login o /register */
-function isAuthRoute(pathname: string) {
-    return AUTH_ROUTES.includes(pathname as (typeof AUTH_ROUTES)[number]);
+    return PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 export function middleware(req: NextRequest) {
     const { pathname, search } = req.nextUrl;
+    const isProtected = isProtectedPath(pathname);
+
+    // Si no es una ruta protegida, continuar
+    if (!isProtected) return NextResponse.next();
+
+    // ¿Hay cookie de sesión?
     const hasSession = Boolean(req.cookies.get(REFRESH_COOKIE_NAME)?.value);
 
-    // 1) Si intenta entrar a secciones protegidas sin sesión → redirigir a /login?next=<ruta>
-    if (isProtectedPath(pathname) && !hasSession) {
-        const url = req.nextUrl.clone();
-        url.pathname = "/login";
-        // preserva la ruta original para volver luego de loguearse
-        url.searchParams.set("next", pathname + (search || ""));
-        return NextResponse.redirect(url);
+    if (!hasSession) {
+        // 👉 Sin sesión en ruta protegida: redirige a /login con ?next=<ruta>
+        const loginUrl = new URL("/login", req.url);
+        const next = pathname + (search || "");
+        loginUrl.searchParams.set("next", next);
+        return NextResponse.redirect(loginUrl);
     }
 
-    // 2) Si ya hay sesión y visita /login o /register → llevar a /dashboard
-    if (hasSession && isAuthRoute(pathname)) {
-        const url = req.nextUrl.clone();
-        url.pathname = "/dashboard";
-        url.search = ""; // limpia query para no arrastrar ?next
-        return NextResponse.redirect(url);
-    }
-
-    // 3) En cualquier otro caso, continuar
+    // Con sesión: continuar
     return NextResponse.next();
 }
 
 /**
- * Importante: excluimos assets, _next, y /api (para que la Mock API no pase por el middleware).
- * Si más adelante sirves otros archivos estáticos, añádelos aquí.
+ * Importante: excluimos assets, _next y /api (para que la Mock API no pase por el middleware).
  */
 export const config = {
     matcher: [

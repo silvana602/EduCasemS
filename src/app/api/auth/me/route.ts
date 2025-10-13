@@ -1,25 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, seedOnce } from "@/mocks/db";
 
-seedOnce();
+// Debe coincidir con el nombre de cookie que setean tus mocks de login
+const REFRESH_COOKIE_NAME = "refreshToken";
 
-/**
- * Lee la cookie refreshToken del request, extrae el userId (mock),
- * busca el usuario en la "DB" y lo devuelve. Si no hay cookie/usuario → 401.
- */
+// Para el mock actual usamos "mock-refresh-<userId>"
+const MOCK_PREFIX = "mock-refresh-";
+
 export async function GET(req: NextRequest) {
-    const token = req.cookies.get("refreshToken")?.value;
-    if (!token) return NextResponse.json({ message: "No session" }, { status: 401 });
+    // Asegura que el seed esté cargado
+    seedOnce?.();
 
-    // Formato del mock: "mock-refresh-<userId>"
-    const match = token.match(/^mock-refresh-(.+)$/);
-    const userId = match?.[1];
-    if (!userId) return NextResponse.json({ message: "Bad token" }, { status: 401 });
+    const token = req.cookies.get(REFRESH_COOKIE_NAME)?.value;
+    if (!token) {
+        // 👉 Sin sesión: 204 (No Content)
+        return new Response(null, { status: 204 });
+    }
+
+    // Token mock esperado: "mock-refresh-<userId>"
+    if (!token.startsWith(MOCK_PREFIX)) {
+        return new Response(null, { status: 204 });
+    }
+    const userId = token.slice(MOCK_PREFIX.length);
+    if (!userId) {
+        return new Response(null, { status: 204 });
+    }
 
     const user = db.users.find((u) => u.id === userId);
-    if (!user) return NextResponse.json({ message: "User not found" }, { status: 401 });
+    if (!user) {
+        return new Response(null, { status: 204 });
+    }
 
-    // No exponemos password en la respuesta
+    // Sanitiza (en tu DB real la contraseña no está en users, pero por si acaso)
     const { password, ...safe } = user as any;
-    return NextResponse.json({ user: safe });
+
+    // ✅ Sesión válida
+    return NextResponse.json({ user: safe }, { status: 200 });
 }
