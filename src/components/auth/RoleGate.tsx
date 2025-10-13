@@ -12,36 +12,49 @@ interface Props extends PropsWithChildren {
     loadingUI?: React.ReactNode;
 }
 
+function roleLanding(role?: string): string {
+    switch (role) {
+        case "admin": return "/admin";
+        case "instructor": return "/instructor";
+        default: return "/dashboard";
+    }
+}
 function buildNext(pathname: string | null): string {
     if (!pathname) return "/";
-    if (pathname === "/login" || pathname.startsWith("/login")) return "/dashboard";
-    if (pathname === "/register" || pathname.startsWith("/register")) return "/dashboard";
+    if (pathname === "/login" || pathname?.startsWith("/login")) return "/dashboard";
+    if (pathname === "/register" || pathname?.startsWith("/register")) return "/dashboard";
     return pathname;
 }
 
-export default function RoleGate({ allow, fallback = "/", loadingUI, children }: Props) {
-    const { user, accessToken } = useAppSelector((s) => s.auth);
+export default function RoleGate({ allow, fallback, loadingUI, children }: Props) {
+    const { user, hydrated } = useAppSelector((s) => s.auth);
     const router = useRouter();
     const pathname = usePathname();
 
+    // Efecto de redirecciones
     useEffect(() => {
-        // No token o no user -> redirige a login con next
-        if (!user || !accessToken) {
+        if (!hydrated) return;
+
+        // Sin sesión (o inactivo) -> login con next
+        if (!user || user.isActive === false) {
             const next = encodeURIComponent(buildNext(pathname));
             router.replace(`/login?next=${next}`);
             return;
         }
-        // Tiene sesión pero no el rol requerido
-        if (!allow.includes(user.role as Role)) {
-            router.replace(fallback);
-        }
-    }, [user, accessToken, allow, router, pathname, fallback]);
 
-    if (!user || !accessToken) {
+        // Rol no permitido -> a su landing natural
+        if (!allow.includes(user.role as Role)) {
+            router.replace(fallback ?? roleLanding(user.role));
+            return;
+        }
+    }, [hydrated, user, allow, router, pathname, fallback]);
+
+    // UI
+    if (!hydrated) {
         return <>{loadingUI ?? <div className="p-6 text-sm opacity-70">Verificando sesión…</div>}</>;
     }
-    if (!allow.includes(user.role as Role)) {
-        return null;
-    }
+    if (!user || user.isActive === false) return null;
+    if (!allow.includes(user.role as Role)) return null;
+
     return <>{children}</>;
 }

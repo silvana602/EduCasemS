@@ -1,5 +1,5 @@
 // src/mocks/db.ts
-import type { Course, Lesson, MockUser, Section, User } from "@/types";
+import type { Course, Lesson, MockUser, Order, Section, User } from "@/types";
 import { uid } from "./utils";
 
 type Store = {
@@ -10,6 +10,7 @@ type Store = {
     progress: Map<string, Set<string>>;
     enrollments: Array<{ userId: string; courseId: string; lastLessonId?: string }>;
     passwords: Map<string, string>;
+    orders: Order[];   // ✅ NUEVO
 };
 
 const G = globalThis as any;
@@ -25,6 +26,7 @@ function initDb(): Store {
             progress: new Map<string, Set<string>>(),
             enrollments: [],
             passwords: new Map<string, string>(),
+            orders: [], // ✅ NUEVO
         } satisfies Store;
     } else {
         // Si faltan estructuras (por resets antiguos), créalas
@@ -35,6 +37,7 @@ function initDb(): Store {
         if (!G.__EDU_DB__.sections) G.__EDU_DB__.sections = [];
         if (!G.__EDU_DB__.lessons) G.__EDU_DB__.lessons = [];
         if (!G.__EDU_DB__.enrollments) G.__EDU_DB__.enrollments = [];
+        if (!G.__EDU_DB__.orders) G.__EDU_DB__.orders = []; // ✅ NUEVO
     }
     return G.__EDU_DB__ as Store;
 }
@@ -63,6 +66,7 @@ export function hardResetDb() {
     db.sections.length = 0;
     db.lessons.length = 0;
     db.enrollments.length = 0;
+    db.orders.length = 0; // ✅ NUEVO
     db.progress.clear();
     db.passwords.clear();
     // también baja el flag de seed
@@ -189,6 +193,7 @@ export function seedOnce() {
     const c3_s3 = makeSection(c3.id, "Arquitectura escalable", 3);
     makeLessons(c3.id, c3_s3, ["Patrones de estado", "Módulos y límites", "Monorepos"]);
 
+    // ---------- Progreso + Enrollments ----------
     db.progress.set(u1.id, new Set());
 
     const firstC1 = db.lessons.filter(l => l.courseId === c1.id).sort((a, b) => a.order - b.order)[0];
@@ -196,5 +201,41 @@ export function seedOnce() {
     db.enrollments.push(
         { userId: u1.id, courseId: c1.id, lastLessonId: firstC1?.id },
         { userId: u1.id, courseId: c2.id, lastLessonId: firstC2?.id }
+    );
+
+    // ---------- Orders (para /admin/orders) ----------
+    // Generamos ejemplos con varios estados y fechas
+    const now = Date.now();
+    const daysAgo = (d: number) => new Date(now - d * 24 * 60 * 60 * 1000).toISOString();
+
+    db.orders.push(
+        {
+            id: uid("ord"),
+            studentId: u1.id,
+            amountBOB: 19,
+            status: "paid",
+            createdAt: daysAgo(1),
+        },
+        {
+            id: uid("ord"),
+            studentId: u1.id,
+            amountBOB: 29,
+            status: "pending",
+            createdAt: daysAgo(3),
+        },
+        {
+            id: uid("ord"),
+            studentId: u1.id,
+            amountBOB: 19,
+            status: "refunded",
+            createdAt: daysAgo(10),
+        },
+        {
+            id: uid("ord"),
+            studentId: u1.id,
+            amountBOB: 29,
+            status: "canceled",
+            createdAt: daysAgo(20),
+        }
     );
 }

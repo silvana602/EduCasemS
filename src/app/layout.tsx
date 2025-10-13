@@ -4,7 +4,6 @@ import { Providers } from "@/redux/Providers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import SessionBootstrap from "@/components/session/SessionBootstrap";
-import { isAuthenticatedServer } from "@/lib/auth/server";
 import DevBanner from "@/components/dev/DevBanner";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 
@@ -13,13 +12,13 @@ export const metadata: Metadata = {
   description: "Plataforma educativa de Cecasem",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const hasSession = await isAuthenticatedServer();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const isDev = process.env.NODE_ENV !== "production";
 
   return (
     <html lang="es" data-theme="light" suppressHydrationWarning>
       <body className="bg-[rgb(var(--bg))] text-[rgb(var(--fg))] antialiased">
+        {/* Inyección de tema temprana para evitar FOUC */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -36,9 +35,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
         <ThemeProvider>
           <Providers>
-            {hasSession && <SessionBootstrap />}
+            {/* 🔑 Siempre montamos el bootstrap para que hidrate Redux al entrar por URL directa */}
+            <SessionBootstrap />
+
             <Navbar />
-            <main className="container mx-auto max-w-7xl px-4 py-6">{children}</main>
+            <main className="container mx-auto max-w-7xl px-4 py-6">
+              {children}
+            </main>
             <Footer />
             {isDev && <DevBanner />}
           </Providers>

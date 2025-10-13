@@ -28,6 +28,8 @@ export default function Sidebar() {
     const nextFull = buildNext(pathname, qs);
     const nextQuery = nextFull ? `?next=${encodeURIComponent(nextFull)}` : "";
 
+    if (pathname?.startsWith("/admin") || pathname?.startsWith("/instructor")) return null;
+
     const [open, setOpen] = useState(false);
     const user = useAppSelector((s) => s.auth.user);
     const dispatch = useAppDispatch();

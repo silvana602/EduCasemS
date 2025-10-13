@@ -1,11 +1,11 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "@/types";
 
-interface AuthState {
+type AuthState = {
     user: User | null;
     accessToken: string | null;
-    hydrated: boolean; // indica si ya intentamos hidratar desde /auth/me
-}
+    hydrated: boolean;
+};
 
 const initialState: AuthState = {
     user: null,
@@ -13,28 +13,30 @@ const initialState: AuthState = {
     hydrated: false,
 };
 
-const slice = createSlice({
+type SetCredentialsPayload = {
+    user: User;
+    accessToken?: string | null;
+};
+
+const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        // Permite setear con o sin accessToken (para /auth/me)
-        setCredentials: (
-            state,
-            action: PayloadAction<{ user: User; accessToken?: string | null }>
-        ) => {
+        setCredentials: (state, action: PayloadAction<SetCredentialsPayload>) => {
             state.user = action.payload.user;
-            state.accessToken =
-                action.payload.accessToken === undefined ? state.accessToken : action.payload.accessToken;
-        },
-        logout: (state) => {
-            state.user = null;
-            state.accessToken = null;
+            state.accessToken = action.payload.accessToken ?? null;
+            state.hydrated = true;
         },
         setHydrated: (state, action: PayloadAction<boolean>) => {
             state.hydrated = action.payload;
         },
+        logout: (state) => {
+            state.user = null;
+            state.accessToken = null;
+            state.hydrated = true;
+        },
     },
 });
 
-export const { setCredentials, logout, setHydrated } = slice.actions;
-export default slice.reducer;
+export const { setCredentials, setHydrated, logout } = authSlice.actions;
+export default authSlice.reducer;

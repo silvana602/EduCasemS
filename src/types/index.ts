@@ -5,3 +5,5 @@ export * from "./course";
 export * from "./section";
 export * from "./lesson";
 export * from "./mock";
+export * from "./status";
+export * from "./order";
