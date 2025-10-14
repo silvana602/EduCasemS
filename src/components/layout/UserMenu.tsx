@@ -44,6 +44,10 @@ export default function UserMenu() {
 
     const isAdmin = user.role === "admin";
     const isInstructor = user.role === "instructor";
+    const canSeeInstructorPanel = isInstructor || isAdmin; // 👈 admin también ve el panel de instructor
+
+    // util para cerrar el menú al navegar
+    const onNavigate = () => close();
 
     return (
         <div className="relative" ref={ref}>
@@ -74,24 +78,41 @@ export default function UserMenu() {
                     <div className="h-px bg-border my-1" />
 
                     {isAdmin && (
-                        <Link role="menuitem" href="/admin" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                        <Link
+                            role="menuitem"
+                            href="/admin"
+                            onClick={onNavigate}
+                            className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                        >
                             Panel de administración
                         </Link>
                     )}
-                    {isInstructor && (
-                        <Link role="menuitem" href="/instructor" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+
+                    {canSeeInstructorPanel && (
+                        <Link
+                            role="menuitem"
+                            href="/instructor"
+                            onClick={onNavigate}
+                            className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                        >
                             Panel de instructor
                         </Link>
                     )}
 
-                    {(isAdmin || isInstructor) && <div className="h-px bg-border my-1" />}
+                    {(isAdmin || canSeeInstructorPanel) && <div className="h-px bg-border my-1" />}
 
-                    <Link role="menuitem" href="/dashboard" className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50">
+                    <Link
+                        role="menuitem"
+                        href="/dashboard"
+                        onClick={onNavigate}
+                        className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
+                    >
                         Mi aprendizaje
                     </Link>
                     <Link
                         role="menuitem"
                         href="/dashboard/settings"
+                        onClick={onNavigate}
                         className="block rounded-lg px-3 py-2 text-sm hover:bg-brand-50"
                     >
                         Configuración

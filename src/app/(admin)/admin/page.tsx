@@ -76,7 +76,7 @@ export default function AdminPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
     return (
-        <div className="rounded-2xl border p-4">
+        <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="text-xs uppercase opacity-70">{label}</div>
             <div className="text-2xl font-semibold mt-1">{value}</div>
         </div>
@@ -85,8 +85,8 @@ function Stat({ label, value }: { label: string; value: number }) {
 
 function Card({ title, children }: React.PropsWithChildren<{ title: string }>) {
     return (
-        <div className="rounded-2xl border">
-            <div className="px-4 py-3 border-b">
+        <div className="rounded-2xl border border-border bg-surface">
+            <div className="px-4 py-3 border-b border-border">
                 <h2 className="text-sm font-semibold">{title}</h2>
             </div>
             <div className="p-4">{children}</div>

@@ -3,8 +3,7 @@
 import { PropsWithChildren, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
-
-type Role = "student" | "instructor" | "admin";
+import { Role } from "@/types";
 
 interface Props extends PropsWithChildren {
     allow: Role[];

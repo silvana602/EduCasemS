@@ -88,11 +88,11 @@ export default function AdminUsersPage() {
                 <div className="flex flex-wrap gap-2 items-end">
                     <label className="grid gap-1">
                         <span className="text-xs">Buscar</span>
-                        <input value={search} onChange={(e) => { setPage(1); setSearch(e.target.value); }} className="rounded-xl border px-3 py-2" placeholder="Nombre o correo" />
+                        <input value={search} onChange={(e) => { setPage(1); setSearch(e.target.value); }} className="rounded-2xl border border-border px-3 py-2" placeholder="Nombre o correo" />
                     </label>
                     <label className="grid gap-1">
                         <span className="text-xs">Rol</span>
-                        <select value={role} onChange={(e) => { setPage(1); setRole(e.target.value as any); }} className="rounded-xl border px-3 py-2">
+                        <select value={role} onChange={(e) => { setPage(1); setRole(e.target.value as any); }} className="rounded-2xl border border-border px-3 py-2">
                             <option value="">Todos</option>
                             <option value="student">Student</option>
                             <option value="instructor">Instructor</option>
@@ -101,7 +101,7 @@ export default function AdminUsersPage() {
                     </label>
                     <label className="grid gap-1">
                         <span className="text-xs">Estado</span>
-                        <select value={active} onChange={(e) => { setPage(1); setActive(e.target.value as any); }} className="rounded-xl border px-3 py-2">
+                        <select value={active} onChange={(e) => { setPage(1); setActive(e.target.value as any); }} className="rounded-2xl border border-border px-3 py-2">
                             <option value="">Todos</option>
                             <option value="true">Activos</option>
                             <option value="false">Inactivos</option>
@@ -114,9 +114,9 @@ export default function AdminUsersPage() {
 
                 {data && (
                     <>
-                        <div className="overflow-x-auto rounded-2xl border">
+                        <div className="overflow-x-auto rounded-2xl border border-border">
                             <table className="w-full text-sm">
-                                <thead className="bg-brand-50/40 text-left">
+                                <thead className="bg-surface text-left">
                                     <tr>
                                         <th className="px-3 py-2">Nombre</th>
                                         <th className="px-3 py-2">Correo</th>
@@ -127,7 +127,7 @@ export default function AdminUsersPage() {
                                 </thead>
                                 <tbody>
                                     {data.items.map((u) => (
-                                        <tr key={u.id} className="border-t">
+                                        <tr key={u.id} className="border-t border-border">
                                             <td className="px-3 py-2">{u.name}</td>
                                             <td className="px-3 py-2">{u.email}</td>
                                             <td className="px-3 py-2">
