@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <ThemeProvider>
           <Providers>
-            {/* 🔑 Siempre montamos el bootstrap para que hidrate Redux al entrar por URL directa */}
+            {/* Siempre montamos el bootstrap para que hidrate Redux al entrar por URL directa */}
             <SessionBootstrap />
 
             <Navbar />

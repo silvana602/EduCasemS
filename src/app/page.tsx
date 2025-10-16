@@ -22,7 +22,7 @@ export default async function HomePage() {
             <section className="rounded-2xl border border-border bg-surface p-6 md:p-10 grid md:grid-cols-2 gap-8 items-center">
                 <div className="order-2 md:order-1">
                     <h1 className="text-3xl font-bold leading-tight">
-                        Aprende con cursos modernos de <span className="text-brand-800">Educasem</span>
+                        Aprende con cursos modernos de <span className="text-brand-heading">Educasem</span>
                     </h1>
                     <p className="mt-2 text-fg/70">
                         Catálogo curado de tecnología y habilidades digitales. Empieza gratis hoy.
@@ -48,7 +48,7 @@ export default async function HomePage() {
                         <h2 className="text-xl font-semibold">Categorías</h2>
                         <p className="text-sm text-fg/70">Explora por temas</p>
                     </div>
-                    <Link href="/categories" className="text-sm text-brand-800 hover:underline">
+                    <Link href="/categories" className="text-sm text-brand-heading hover:underline">
                         Ver todas →
                     </Link>
                 </header>
@@ -63,7 +63,7 @@ export default async function HomePage() {
                                 <p className="font-medium">{cat.name}</p>
                                 <p className="text-xs text-fg/70">{cat.count} curso(s)</p>
                             </div>
-                            <span className="text-sm text-brand-800">Ver</span>
+                            <span className="text-sm text-brand-heading">Ver</span>
                         </Link>
                     ))}
                     {categories.items.length === 0 && (

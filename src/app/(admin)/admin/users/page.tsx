@@ -1,7 +1,7 @@
 "use client";
 
+import { RoleGate } from "@/components/auth";
 import { useEffect, useMemo, useState } from "react";
-import RoleGate from "@/components/auth/RoleGate";
 
 type Role = "student" | "instructor" | "admin";
 type User = {

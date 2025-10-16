@@ -1,8 +1,8 @@
 "use client";
 
+import { RoleGate } from "@/components/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import RoleGate from "@/components/auth/RoleGate";
 
 const links = [
     { href: "/instructor", label: "Resumen" },

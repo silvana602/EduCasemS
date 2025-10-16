@@ -25,7 +25,7 @@ function buildNext(pathname: string | null): string {
     return pathname;
 }
 
-export default function RoleGate({ allow, fallback, loadingUI, children }: Props) {
+export const RoleGate = ({ allow, fallback, loadingUI, children }: Props) => {
     const { user, hydrated } = useAppSelector((s) => s.auth);
     const router = useRouter();
     const pathname = usePathname();

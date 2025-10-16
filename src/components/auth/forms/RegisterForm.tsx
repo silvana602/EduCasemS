@@ -2,17 +2,14 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { login } from "@/services/auth.service";
+import { register as registerReq } from "@/services/auth.service";
 import { useAppDispatch } from "@/redux/hooks";
 import { setCredentials } from "@/redux/slices/authSlice";
 import Link from "next/link";
 
 function sanitizeNext(nextRaw: string | null): string {
-    // Fallback vacío para poder aplicar landing por rol
     if (!nextRaw) return "";
-    // Solo permitimos rutas internas
     if (!nextRaw.startsWith("/")) return "";
-    // Evitar bucles hacia /login o /register
     if (nextRaw === "/login" || nextRaw.startsWith("/login/")) return "";
     if (nextRaw === "/register" || nextRaw.startsWith("/register/")) return "";
     return nextRaw;
@@ -30,10 +27,11 @@ function roleLanding(role?: string): string {
     }
 }
 
-export default function LoginForm() {
+export const RegisterForm = () => {
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [show, setShow] = useState(false);
+    const [pass1, setPass1] = useState("");
+    const [pass2, setPass2] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -44,15 +42,19 @@ export default function LoginForm() {
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
+        if (pass1 !== pass2) {
+            setError("Las contraseñas no coinciden");
+            return;
+        }
         setLoading(true);
         try {
-            const data = await login({ email, password });
+            const data = await registerReq({ name, email, password: pass1 });
             dispatch(setCredentials({ accessToken: data.accessToken, user: data.user }));
 
             const target = nextPath || roleLanding(data?.user?.role);
             router.replace(target);
         } catch (err: any) {
-            setError(err?.message ?? "No se pudo iniciar sesión");
+            setError(err?.message ?? "No se pudo crear la cuenta");
         } finally {
             setLoading(false);
         }
@@ -60,6 +62,17 @@ export default function LoginForm() {
 
     return (
         <form onSubmit={onSubmit} className="grid gap-3">
+            <label className="grid gap-1">
+                <span className="text-sm">Nombre</span>
+                <input
+                    className="rounded-xl border border-border bg-surface px-3 py-2"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    autoComplete="name"
+                    required
+                />
+            </label>
+
             <label className="grid gap-1">
                 <span className="text-sm">Correo</span>
                 <input
@@ -74,35 +87,38 @@ export default function LoginForm() {
 
             <label className="grid gap-1">
                 <span className="text-sm">Contraseña</span>
-                <div className="relative">
-                    <input
-                        type={show ? "text" : "password"}
-                        className="w-full rounded-xl border border-border bg-surface px-3 py-2 pr-10"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="current-password"
-                        required
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShow((v) => !v)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-fg/70"
-                    >
-                        {show ? "Ocultar" : "Ver"}
-                    </button>
-                </div>
+                <input
+                    type="password"
+                    className="rounded-xl border border-border bg-surface px-3 py-2"
+                    value={pass1}
+                    onChange={(e) => setPass1(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                />
+            </label>
+
+            <label className="grid gap-1">
+                <span className="text-sm">Repite la contraseña</span>
+                <input
+                    type="password"
+                    className="rounded-xl border border-border bg-surface px-3 py-2"
+                    value={pass2}
+                    onChange={(e) => setPass2(e.target.value)}
+                    autoComplete="new-password"
+                    required
+                />
             </label>
 
             {error && <p className="text-sm text-red-600">{error}</p>}
 
             <button className="btn bg-brand-600 text-white hover:bg-brand-800" disabled={loading}>
-                {loading ? "Ingresando..." : "Ingresar"}
+                {loading ? "Creando..." : "Crear cuenta"}
             </button>
 
             <p className="text-xs text-fg/70">
-                ¿No tienes cuenta?{" "}
-                <Link className="underline" href={`/register${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
-                    Regístrate
+                ¿Ya tienes cuenta?{" "}
+                <Link className="underline" href={`/login${nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`}>
+                    Inicia sesión
                 </Link>
             </p>
         </form>

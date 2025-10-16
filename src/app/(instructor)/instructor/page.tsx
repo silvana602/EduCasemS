@@ -1,8 +1,8 @@
 "use client";
 
-import RoleGate from "@/components/auth/RoleGate";
 import { useEffect, useState } from "react";
 import { getJson } from "@/services/http";
+import { RoleGate } from "@/components/auth";
 
 type InstructorDash = {
     cards: {

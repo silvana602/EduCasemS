@@ -1,6 +1,6 @@
 "use client";
 
-import RoleGate from "@/components/auth/RoleGate";
+import { RoleGate } from "@/components/auth";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (

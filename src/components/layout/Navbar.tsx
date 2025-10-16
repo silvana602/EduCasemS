@@ -14,6 +14,7 @@ import { MdLanguage } from "react-icons/md";
 import { FaCaretDown, FaShoppingCart } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import Avatar from "@/components/ui/Avatar";
+import { CgClose, CgMenuGridO } from "react-icons/cg";
 
 function buildNext(pathname: string | null, qs: string): string | "" {
     if (!pathname) return "";
@@ -166,13 +167,9 @@ export const Navbar = () => {
                         >
                             <span className="inline-block align-middle">
                                 {openMobile ? (
-                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current">
-                                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.89 18.3 9.17 12 2.89 5.71 4.3 4.29l6.29 6.3 6.3-6.3z" />
-                                    </svg>
+                                    <CgClose size={20} />
                                 ) : (
-                                    <svg width="18" height="18" viewBox="0 0 24 24" className="fill-current">
-                                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
-                                    </svg>
+                                    <CgMenuGridO size={20} />
                                 )}
                             </span>
                         </button>

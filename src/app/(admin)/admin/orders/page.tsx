@@ -1,6 +1,6 @@
 "use client";
 
-import RoleGate from "@/components/auth/RoleGate";
+import { RoleGate } from "@/components/auth";
 import { useEffect, useMemo, useState } from "react";
 
 type Row = {

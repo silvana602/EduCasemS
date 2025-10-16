@@ -1,6 +1,6 @@
 "use client";
 
-import RoleGate from "@/components/auth/RoleGate";
+import { RoleGate } from "@/components/auth";
 import { useState } from "react";
 
 export default function AdminSettingsPage() {

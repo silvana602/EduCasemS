@@ -1,6 +1,6 @@
 "use client";
 
-import RoleGate from "@/components/auth/RoleGate";
+import { RoleGate } from "@/components/auth";
 import { useEffect, useState } from "react";
 import { getJson } from "@/services/http";
 

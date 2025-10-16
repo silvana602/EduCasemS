@@ -49,7 +49,7 @@ export default async function CourseDetail({
                 <p className="text-sm text-fg/70">{data.description}</p>
 
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-800">
+                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-heading">
                         {data.category}
                     </span>
                     <span className="capitalize text-fg/70">{data.level}</span>
