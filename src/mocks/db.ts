@@ -116,32 +116,32 @@ export function seedOnce() {
     // ---------- Courses ----------
     const c1: Course = {
         id: uid("crs"),
-        title: "Introducción a Next.js",
-        description: "Crea aplicaciones modernas con App Router, SSR e ISR.",
-        category: "Web",
+        title: "Prevencion de trata de personas y violencias digitales",
+        description: "En el marco del proyecto 'Estrategias digitales de lucha contra la trata de personas'",
+        category: "TRATA",
         level: "beginner",
         price: 0,
-        thumbnailUrl: "/images/next-thumb.jpg",
+        thumbnailUrl: "/images/TRATA.jpeg",
         instructorId: u2.id,
     };
     const c2: Course = {
         id: uid("crs"),
-        title: "TypeScript desde cero",
-        description: "Tipado estático para JS: interfaces, genéricos y más.",
-        category: "Programación",
+        title: "Capacitacion trata y trafico de personas",
+        description: "Capacitacion contra el delito de personas, referente para la conprension a aplicacion a tipos penales",
+        category: "TRATA",
         level: "beginner",
         price: 19,
-        thumbnailUrl: "/images/ts-thumb.jpg",
+        thumbnailUrl: "/images/MANUAL.jpeg",
         instructorId: u2.id,
     };
     const c3: Course = {
         id: uid("crs"),
-        title: "Frontend Avanzado con React 19",
-        description: "Patrones, rendimiento y testing para proyectos reales.",
-        category: "Web",
+        title: "LEY 348: Ley anti hombres?",
+        description: "Aspectos que deterninan la ley de forma clara para la comprension de la poblacion",
+        category: "NORMATIVA",
         level: "advanced",
         price: 29,
-        thumbnailUrl: "/images/react-thumb.jpg",
+        thumbnailUrl: "/images/LEY.jpeg",
         instructorId: u2.id,
     };
     db.courses.push(c1, c2, c3);
@@ -172,21 +172,21 @@ export function seedOnce() {
     }
 
     // Amplíado
-    const c1_s1 = makeSection(c1.id, "Fundamentos de Next.js", 1);
-    makeLessons(c1.id, c1_s1, ["Qué es Next.js", "App Router", "SSR/ISR", "Layouts y Routing"]);
-    const c1_s2 = makeSection(c1.id, "Data Fetching y Deploy", 2);
-    makeLessons(c1.id, c1_s2, ["Data Fetching (RSC)", "Forms y acciones", "Deploy en Vercel"]);
-    const c1_s3 = makeSection(c1.id, "Optimización y buenas prácticas", 3);
-    makeLessons(c1.id, c1_s3, ["Imágenes y fuentes", "Cache y revalidación", "Accesibilidad"]);
+    const c1_s1 = makeSection(c1.id, "Prevencion de trata de personas y violencias digitales", 1);
+    makeLessons(c1.id, c1_s1, ["Qué es trata", "Cual es la diferencia entre trata y trafico", "Como podemos prevenir la trata", "Conclusiones"]);
+    const c1_s2 = makeSection(c1.id, "La ley contra la trata", 2);
+    makeLessons(c1.id, c1_s2, ["Ley ###", "Antecedentes de casos de trata", "Casos de trata"]);
+    const c1_s3 = makeSection(c1.id, "Modos de prevencion", 3);
+    makeLessons(c1.id, c1_s3, ["Educacion en escuelas", "Capacitacitaciones", "CECASEM"]);
 
-    const c2_s1 = makeSection(c2.id, "Bases de TypeScript", 1);
+    const c2_s1 = makeSection(c2.id, "Capacitacion trata y trafico de personas", 1);
     makeLessons(c2.id, c2_s1, ["Tipos básicos", "Interfaces y tipos", "Genéricos"]);
     const c2_s2 = makeSection(c2.id, "Tipos avanzados", 2);
     makeLessons(c2.id, c2_s2, ["Narrowing", "Utilitarios", "Inferencia avanzada"]);
     const c2_s3 = makeSection(c2.id, "TS en proyectos reales", 3);
     makeLessons(c2.id, c2_s3, ["TS + React", "TSConfig y paths", "Mejores prácticas"]);
 
-    const c3_s1 = makeSection(c3.id, "React Avanzado", 1);
+    const c3_s1 = makeSection(c3.id, "LEY 348: Ley anti hombres?", 1);
     makeLessons(c3.id, c3_s1, ["React Server Components", "Concurrent features", "Performance"]);
     const c3_s2 = makeSection(c3.id, "Calidad", 2);
     makeLessons(c3.id, c3_s2, ["Testing", "Accesibilidad", "Storybook"]);

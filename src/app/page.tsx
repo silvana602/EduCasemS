@@ -22,10 +22,10 @@ export default async function HomePage() {
             <section className="rounded-2xl border border-border bg-surface p-6 md:p-10 grid md:grid-cols-2 gap-8 items-center">
                 <div className="order-2 md:order-1">
                     <h1 className="text-3xl font-bold leading-tight">
-                        Aprende con cursos modernos de <span className="text-brand-heading">Educasem</span>
+                        Conocimiento que empodera y tranforma vidas con sentido <span className="text-brand-heading">Educasem</span>
                     </h1>
                     <p className="mt-2 text-fg/70">
-                        Catálogo curado de tecnología y habilidades digitales. Empieza gratis hoy.
+                        Empieza a aprender junto a CECASEM, incribete a los cursos hoy!.
                     </p>
                     <div className="mt-4 flex gap-2">
                         <Link href="/courses" className="rounded-xl bg-brand-600 px-4 py-2 text-white hover:bg-brand-800 text-sm">
@@ -37,7 +37,7 @@ export default async function HomePage() {
                     </div>
                 </div>
                 <div className="relative order-1 md:order-2 aspect-video w-full rounded-xl overflow-hidden">
-                    <Image src="/images/react-thumb.jpg" alt="Cursos" fill className="object-cover" priority />
+                    <Image src="/images/INFO.jpeg" alt="Cursos" fill className="object-cover" priority />
                 </div>
             </section>
 
